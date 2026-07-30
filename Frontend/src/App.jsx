@@ -12,9 +12,12 @@ function App(){
   const [shortUrl,setShortUrl] = useState("");
   const [copied,setCopied] = useState(false);
   const [qrImage,setQrImage] = useState("");
+  const [loading,setLoading] = useState(false);
 
   const handleShorten = async()=>{
-    if(!url) return ;
+    
+    if(!url || loading) return ;
+    setLoading(true);
     try{
       console.log("Sending URL:", url);
       const res = await axios.post(`${API_BASE_URL}/shorten`,{
@@ -34,6 +37,8 @@ function App(){
       console.log("Status:", error.response?.status);
       console.log("Response:", error.response?.data);
       alert(JSON.stringify(error.response?.data));
+    }finally{
+      setLoading(false);
     }
   }
 
@@ -53,7 +58,7 @@ function App(){
         <input type="text" className="input input-success w-full"
         placeholder="Enter long URL" value={url}
         onChange = {(e)=> setUrl(e.target.value)}/>
-        <button onClick={handleShorten} className="btn btn-primary w-f sm-auto">
+        <button onClick={handleShorten} className="btn btn-primary w-f sm-auto" disabled={loading}>
               Shorten 
         </button>
       </div>
